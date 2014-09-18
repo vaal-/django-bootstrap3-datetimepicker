@@ -1,6 +1,6 @@
 # -*- coding: utf-8 -*-
 from django.forms.util import flatatt
-from django.forms.widgets import DateTimeInput
+from django.forms.widgets import DateInput, DateTimeInput
 from django.utils import translation
 from django.utils.safestring import mark_safe
 from django.utils.html import conditional_escape
@@ -15,7 +15,7 @@ except ImportError:  # python3
     from django.utils.encoding import force_text
 
 
-class DateTimePicker(DateTimeInput):
+class BaseDateTimePicker(object):
     class Media:
         class JsFiles(object):
             def __iter__(self):
@@ -108,7 +108,7 @@ class DateTimePicker(DateTimeInput):
             div_attrs = {'class': 'input-group date'}
         if format is None and options and options.get('format'):
             format = self.conv_datetime_format_js2py(options.get('format'))
-        super(DateTimePicker, self).__init__(attrs, format)
+        super(BaseDateTimePicker, self).__init__(attrs, format)
         if 'class' not in self.attrs:
             self.attrs['class'] = 'form-control'
         self.div_attrs = div_attrs and div_attrs.copy() or {}
@@ -146,3 +146,11 @@ class DateTimePicker(DateTimeInput):
         else:
             js = ''
         return mark_safe(force_text(html + js))
+
+
+class DatePicker(BaseDateTimePicker, DateInput):
+    pass
+
+
+class DateTimePicker(BaseDateTimePicker, DateTimeInput):
+    pass
